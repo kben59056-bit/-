@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0b1020">
+<title>دليل تمارين Loops في C - Algorithmique 1</title>
+<style>
+:root{--bg:#0b1020;--panel:#141c30;--panel2:#1b2740;--text:#edf2ff;--muted:#aab6d0;--line:#2b3854;--accent:#7c9cff;--green:#54d6a0;--yellow:#ffd166}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Tahoma,Arial,sans-serif;line-height:1.75}
+header{padding:34px 20px;background:linear-gradient(135deg,#18284b,#11182b);border-bottom:1px solid var(--line)}
+.wrap{max-width:1100px;margin:auto;padding:0 18px}h1{font-size:clamp(25px,4vw,38px);margin:0 0 8px}header p{color:var(--muted);margin:0}
+.toolbar{position:sticky;top:0;z-index:5;background:#0e1628ee;backdrop-filter:blur(10px);padding:12px 0;border-bottom:1px solid var(--line)}
+.controls{display:flex;gap:10px;flex-wrap:wrap}.controls input,.controls select{background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:10px;padding:11px;font:inherit}
+.controls input{flex:1;min-width:190px}.controls select{min-width:180px}
+.stats{color:var(--muted);font-size:13px;margin-top:8px}
+main{padding:22px 0 60px}.intro{background:var(--panel);border:1px solid var(--line);padding:16px;border-radius:14px;margin-bottom:22px}
+.unit{margin:28px 0}.unit h2{font-size:21px;border-right:4px solid var(--accent);padding-right:12px}.level{color:var(--yellow);font-size:13px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:17px;margin:12px 0;box-shadow:0 5px 18px #0002}
+.card h3{margin:0 0 5px;font-size:17px}.meta{color:var(--muted);font-size:12px}.idea{margin:10px 0;color:#dce5fa}
+details{margin-top:12px}summary,button{cursor:pointer;background:var(--panel2);color:var(--text);border:1px solid #405174;border-radius:9px;padding:9px 13px;font:inherit}
+summary{display:inline-block;list-style:none}summary::-webkit-details-marker{display:none}summary:before{content:"＋ ";color:var(--green)}details[open] summary:before{content:"− "}
+pre{direction:ltr;text-align:left;white-space:pre-wrap;overflow:auto;background:#080d18;border:1px solid #26334c;border-radius:10px;padding:14px;color:#d6e3ff;font:13px/1.65 Consolas,monospace}
+.note{color:var(--muted);font-size:13px}.empty{display:none;color:var(--yellow);padding:20px}
+footer{border-top:1px solid var(--line);padding:25px 0;color:var(--muted);font-size:13px}
+@media(max-width:600px){.wrap{padding:0 12px}.card{padding:13px}header{padding:25px 12px}}
+</style>
+<style>
+/* تحسينات توافق الهواتف والمتصفحات */
+html { -webkit-text-size-adjust: 100%; }
+body { min-width: 280px; }
+.toolbar { position:relative; top:auto; }
+.controls input,.controls select { min-height:44px; }
+button,summary { min-height:42px; touch-action:manipulation; }
+.card { overflow-wrap:anywhere; }
+pre { -webkit-overflow-scrolling:touch; }
+@media(max-width:600px) { .controls {display:grid;grid-template-columns:1fr;} .controls input,.controls select {width:100%;min-width:0;} .controls button {width:100%;} }
+
+/* متابعة إنجاز التمارين */
+.progress-panel{margin:14px 0 0;padding:12px 14px;background:var(--panel);border:1px solid var(--line);border-radius:12px}
+.progress-top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center;font-size:14px}
+.progress-track{height:9px;background:#26334c;border-radius:99px;overflow:hidden;margin-top:9px}
+.progress-fill{height:100%;width:0;background:var(--green);transition:width .2s ease}
+.progress-reset{margin-top:9px;font-size:12px;padding:6px 10px}
+.exercise-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.done-btn{background:#173b35;border-color:#397b68;color:#b9ffe3;min-height:42px}
+.done-btn.is-done{background:#26334c;border-color:#64799e;color:#edf2ff}
+.exercise.is-completed{border-color:#397b68}
+.exercise.is-completed h3:after{content:' ✓';color:var(--green);font-size:14px}
+@media(max-width:600px){.exercise-actions button{width:100%}}
+</style>
+</head>
+<body>
+<header><div class="wrap"><h1>دليل تمارين Loops في لغة C</h1>
+<p>Algorithmique 1 · المستوى الأول الجامعي · أفكار التمارين مع أمثلة وحلول قابلة للإظهار والإخفاء</p></div></header>
+<div class="toolbar"><div class="wrap"><div class="controls">
+<input id="search" type="search" placeholder="ابحث عن فكرة: Sum, Factorial, Digits..." autocomplete="off">
+<select id="filter"><option value="all">كل المستويات</option>
+<option value="1">المستوى 1: أساسيات</option><option value="2">المستوى 2: حسابات</option>
+<option value="3">المستوى 3: شروط</option><option value="4">المستوى 4: Digits</option>
+<option value="5">المستوى 5: متتاليات</option><option value="6">المستوى 6: Nested Loops</option>
+<option value="7">المستوى 7: مركبة</option></select>
+<button type="button" id="allBtn">إظهار كل الحلول</button><button type="button" id="hideBtn">إخفاء كل الحلول</button>
+</div><div class="stats" id="stats">جميع التمارين ظاهرة: 75 تمريناً في 7 مستويات.</div>
+<div class="progress-panel" aria-live="polite">
+ <div class="progress-top"><strong>تقدّمك في التمارين</strong><span id="progressText">أنجزت 0 من 75 تمريناً (0%)</span></div>
+ <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+ <button type="button" class="progress-reset" id="resetProgress">إعادة ضبط التقدم</button>
+</div></div></div>
+<main class="wrap"><div class="intro"><b>كيف تستعمل الملف؟</b><br>
+1) اقرأ فكرة التمرين وحاول كتابة الحل بنفسك. 2) اضغط «إظهار الحل» للمقارنة. 3) غيّر قيم الإدخال واختبر فهمك.
+<div class="note">الحلول مقاطع C تركز على منطق الحلقة. أضف #include &lt;stdio.h&gt; وداخل main عند تحويلها إلى برنامج كامل. في أمثلة الكسور استعملنا double.</div>
+<div class="note">ملاحظة: يجب فتح الملف بمتصفح مثل Chrome أو Edge للاستفادة من البحث وتصفية المستويات. حتى إذا لم تعمل JavaScript ستبقى التمارين ظاهرة ويمكن قراءتها.</div></div>
+<div id="content"><section class="unit" data-level="1"><h2>المستوى 1: أساسيات التكرار <span class="level">· سهل</span></h2><article class="card exercise" data-level="1" data-search="print numbers اطبع الأعداد من 1 إلى n. أدخل n=5، المتوقع: 1 2 3 4 5." data-exercise-id="exercise-1">
+<h3>1. Print numbers</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">اطبع الأعداد من 1 إلى N. مثال: أدخل N=5، المتوقع: 1 2 3 4 5.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int i, n;
+scanf(&quot;%d&quot;, &amp;n);
+for(i = 1; i &lt;= n; i++)
+    printf(&quot;%d &quot;, i);</pre></details>
+</article><article class="card exercise" data-level="1" data-search="reverse counting اطبع الأعداد تنازلياً من n إلى 1. n=5، المتوقع: 5 4 3 2 1." data-exercise-id="exercise-2">
+<h3>2. Reverse counting</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">اطبع الأعداد تنازلياً من N إلى 1. مثال: N=5، المتوقع: 5 4 3 2 1.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int i, n;
+scanf(&quot;%d&quot;, &amp;n);
+for(i = n; i &gt;= 1; i--)
+    printf(&quot;%d &quot;, i);</pre></details>
+</article><article class="card exercise" data-level="1" data-search="even numbers اطبع الأعداد الزوجية من 1 إلى n. n=10، المتوقع: 2 4 6 8 10." data-exercise-id="exercise-3">
+<h3>3. Even numbers</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">اطبع الأعداد الزوجية من 1 إلى N. مثال: N=10، المتوقع: 2 4 6 8 10.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int i, n;
+scanf(&quot;%d&quot;, &amp;n);
+for(i = 2; i &lt;= n; i += 2)
+    printf(&quot;%d &quot;, i);</pre></details>
+</article><article class="card exercise" data-level="1" data-search="odd numbers اطبع الأعداد الفردية من 1 إلى n. n=9، المتوقع: 1 3 5 7 9." data-exercise-id="exercise-4">
+<h3>4. Odd numbers</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">اطبع الأعداد الفردية من 1 إلى N. مثال: N=9، المتوقع: 1 3 5 7 9.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int i, n;
+scanf(&quot;%d&quot;, &amp;n);
+for(i = 1; i &lt;= n; i += 2)
+    printf(&quot;%d &quot;, i);</pre></details>
+</article><article class="card exercise" data-level="1" data-search="multiples اطبع مضاعفات k التي لا تتجاوز n. k=3 وn=12، المتوقع: 3 6 9 12." data-exercise-id="exercise-5">
+<h3>5. Multiples</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">اطبع مضاعفات K التي لا تتجاوز N. مثال: K=3 وN=12، المتوقع: 3 6 9 12.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int i, n, k;
+scanf(&quot;%d%d&quot;, &amp;k, &amp;n);
+for(i = k; i &lt;= n; i += k)
+    printf(&quot;%d &quot;, i);</pre></details>
+</article><article class="card exercise" data-level="1" data-search="step increment اطبع الأعداد من a إلى b بزيادة ثابتة p. a=2, b=12, p=3." data-exercise-id="exercise-6">
+<h3>6. Step increment</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">اطبع الأعداد من A إلى B بزيادة ثابتة P. مثال: A=2, B=12, P=3.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int i, a, b, p;
+scanf(&quot;%d%d%d&quot;, &amp;a, &amp;b, &amp;p);
+if(p &gt; 0)
+    for(i = a; i &lt;= b; i += p)
+        printf(&quot;%d &quot;, i);</pre></details>
+</article><article class="card exercise" data-level="1" data-search="sum احسب مجموع الأعداد من 1 إلى n. n=5، النتيجة 15." data-exercise-id="exercise-7">
+<h3>7. Sum</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">احسب مجموع الأعداد من 1 إلى N. مثال: N=5، النتيجة 15.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int i, n, sum = 0;
+scanf(&quot;%d&quot;, &amp;n);
+for(i = 1; i &lt;= n; i++)
+    sum += i;
+printf(&quot;%d&quot;, sum);</pre></details>
+</article><article class="card exercise" data-level="1" data-search="sum of even numbers احسب مجموع الأعداد الزوجية من 1 إلى n. n=10، النتيجة 30." data-exercise-id="exercise-8">
+<h3>8. Sum of even numbers</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">احسب مجموع الأعداد الزوجية من 1 إلى N. مثال: N=10، النتيجة 30.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int i, n, sum = 0;
+scanf(&quot;%d&quot;, &amp;n);
+for(i = 1; i &lt;= n; i++)
+    if(i % 2 == 0) sum += i;
+printf(&quot;%d&quot;, sum);</pre></details>
+</article><article class="card exercise" data-level="1" data-search="sum of odd numbers احسب مجموع الأعداد الفردية من 1 إلى n. n=9، النتيجة 25." data-exercise-id="exercise-9">
+<h3>9. Sum of odd numbers</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">احسب مجموع الأعداد الفردية من 1 إلى N. مثال: N=9، النتيجة 25.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int i, n, sum = 0;
+scanf(&quot;%d&quot;, &amp;n);
+for(i = 1; i &lt;= n; i++)
+    if(i % 2 != 0) sum += i;
+printf(&quot;%d&quot;, sum);</pre></details>
+</article><article class="card exercise" data-level="1" data-search="counter احسب كم عدداً من 1 إلى n يحقق شرطاً، مثال: يقبل القسمة على 3. n=10، النتيجة 3." data-exercise-id="exercise-10">
+<h3>10. Counter</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">احسب كم عدداً من 1 إلى N يحقق شرطاً، مثال: يقبل القسمة على 3. مثال: N=10، النتيجة 3.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int i, n, count = 0;
+scanf(&quot;%d&quot;, &amp;n);
+for(i = 1; i &lt;= n; i++)
+    if(i % 3 == 0) count++;
+printf(&quot;%d&quot;, count);</pre></details>
+</article><article class="card exercise" data-level="1" data-search="product احسب حاصل ضرب الأعداد من 1 إلى n (factorial). n=4، النتيجة 24." data-exercise-id="exercise-11">
+<h3>11. Product</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">احسب حاصل ضرب الأعداد من 1 إلى N (Factorial). مثال: N=4، النتيجة 24.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int i, n;
+long long product = 1;
+scanf(&quot;%d&quot;, &amp;n);
+for(i = 1; i &lt;= n; i++)
+    product *= i;
+printf(&quot;%lld&quot;, product);</pre></details>
+</article><article class="card exercise" data-level="1" data-search="read n numbers اقرأ n أعداداً من المستخدم واحسب مجموعها. إذا أدخل 2, 4, 6 فالنتيجة 12." data-exercise-id="exercise-12">
+<h3>12. Read N numbers</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">اقرأ N أعداداً من المستخدم واحسب مجموعها. مثال: إذا أدخل 2, 4, 6 فالنتيجة 12.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int i, n, x, sum = 0;
+scanf(&quot;%d&quot;, &amp;n);
+for(i = 1; i &lt;= n; i++) {
+    scanf(&quot;%d&quot;, &amp;x);
+    sum += x;
+}
+printf(&quot;%d&quot;, sum);</pre></details>
+</article></section>
+<section class="unit" data-level="2"><h2>المستوى 2: العمليات الحسابية والمتتاليات البسيطة <span class="level">· سهل – متوسط</span></h2><article class="card exercise" data-level="2" data-search="factorial احسب n!، أي 1×2×...×n. n=5، النتيجة 120." data-exercise-id="exercise-13">
+<h3>1. Factorial</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">احسب N!، أي 1×2×...×N. مثال: N=5، النتيجة 120.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int i, n;
+long long fact = 1;
+scanf(&quot;%d&quot;, &amp;n);
+for(i = 1; i &lt;= n; i++) fact *= i;
+printf(&quot;%lld&quot;, fact);</pre></details>
+</article><article class="card exercise" data-level="2" data-search="power احسب x أس n دون استعمال pow(). x=2, n=5، النتيجة 32." data-exercise-id="exercise-14">
+<h3>2. Power</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">احسب X أس N دون استعمال pow(). مثال: X=2, N=5، النتيجة 32.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int i, n, x;
+long long result = 1;
+scanf(&quot;%d%d&quot;, &amp;x, &amp;n);
+for(i = 1; i &lt;= n; i++) result *= x;
+printf(&quot;%lld&quot;, result);</pre></details>
+</article><article class="card exercise" data-level="2" data-search="multiplication table اطبع جدول ضرب عدد معين من 1 إلى 10. k=7: 7×1 إلى 7×10." data-exercise-id="exercise-15">
+<h3>3. Multiplication table</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">اطبع جدول ضرب عدد معين من 1 إلى 10. مثال: K=7: 7×1 إلى 7×10.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int i, k;
+scanf(&quot;%d&quot;, &amp;k);
+for(i = 1; i &lt;= 10; i++)
+    printf(&quot;%d x %d = %d\n&quot;, k, i, k*i);</pre></details>
+</article><article class="card exercise" data-level="2" data-search="sum of squares احسب 1²+2²+...+n². n=3، النتيجة 14." data-exercise-id="exercise-16">
+<h3>4. Sum of squares</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">احسب 1²+2²+...+N². مثال: N=3، النتيجة 14.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int i, n, sum = 0;
+scanf(&quot;%d&quot;, &amp;n);
+for(i = 1; i &lt;= n; i++) sum += i*i;
+printf(&quot;%d&quot;, sum);</pre></details>
+</article><article class="card exercise" data-level="2" data-search="sum of cubes احسب 1³+2³+...+n³. n=3، النتيجة 36." data-exercise-id="exercise-17">
+<h3>5. Sum of cubes</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">احسب 1³+2³+...+N³. مثال: N=3، النتيجة 36.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int i, n, sum = 0;
+scanf(&quot;%d&quot;, &amp;n);
+for(i = 1; i &lt;= n; i++) sum += i*i*i;
+printf(&quot;%d&quot;, sum);</pre></details>
+</article><article class="card exercise" data-level="2" data-search="arithmetic series احسب مجموع متتالية تبدأ بـ a وتزيد بمقدار d وعدد حدودها n. a=2,d=3,n=4: 2+5+8+11=26." data-exercise-id="exercise-18">
+<h3>6. Arithmetic series</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">احسب مجموع متتالية تبدأ بـ A وتزيد بمقدار D وعدد حدودها N. مثال: A=2,D=3,N=4: 2+5+8+11=26.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int i, a, d, n, term, sum = 0;
+scanf(&quot;%d%d%d&quot;, &amp;a, &amp;d, &amp;n);
+for(i = 0; i &lt; n; i++) {
+    term = a + i*d;
+    sum += term;
+}
+printf(&quot;%d&quot;, sum);</pre></details>
+</article><article class="card exercise" data-level="2" data-search="harmonic series احسب 1 + 1/2 + ... + 1/n. n=2، النتيجة 1.5." data-exercise-id="exercise-19">
+<h3>7. Harmonic series</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">احسب 1 + 1/2 + ... + 1/N. مثال: N=2، النتيجة 1.5.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int i, n;
+double sum = 0;
+scanf(&quot;%d&quot;, &amp;n);
+for(i = 1; i &lt;= n; i++)
+    sum += 1.0 / i;
+printf(&quot;%.4f&quot;, sum);</pre></details>
+</article><article class="card exercise" data-level="2" data-search="fraction series احسب مجموع 1/2 + 2/3 + ... + n/(n+1). n=2، النتيجة 1.1667 تقريباً." data-exercise-id="exercise-20">
+<h3>8. Fraction series</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">احسب مجموع 1/2 + 2/3 + ... + N/(N+1). مثال: N=2، النتيجة 1.1667 تقريباً.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int i, n;
+double sum = 0;
+scanf(&quot;%d&quot;, &amp;n);
+for(i = 1; i &lt;= n; i++)
+    sum += (double)i / (i + 1);
+printf(&quot;%.4f&quot;, sum);</pre></details>
+</article><article class="card exercise" data-level="2" data-search="sum of factorials احسب 1! + 2! + ... + n! بتحديث المضروب تدريجياً. n=3، النتيجة 1+2+6=9." data-exercise-id="exercise-21">
+<h3>9. Sum of factorials</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">احسب 1! + 2! + ... + N! بتحديث المضروب تدريجياً. مثال: N=3، النتيجة 1+2+6=9.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int i, n;
+long long fact = 1, sum = 0;
+scanf(&quot;%d&quot;, &amp;n);
+for(i = 1; i &lt;= n; i++) {
+    fact *= i;
+    sum += fact;
+}
+printf(&quot;%lld&quot;, sum);</pre></details>
+</article><article class="card exercise" data-level="2" data-search="product of input numbers اقرأ n أعداد واحسب حاصل ضربها. 2, 3, 4 تعطي 24." data-exercise-id="exercise-22">
+<h3>10. Product of input numbers</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">اقرأ N أعداد واحسب حاصل ضربها. مثال: 2, 3, 4 تعطي 24.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int i, n, x;
+long long product = 1;
+scanf(&quot;%d&quot;, &amp;n);
+for(i = 1; i &lt;= n; i++) {
+    scanf(&quot;%d&quot;, &amp;x);
+    product *= x;
+}
+printf(&quot;%lld&quot;, product);</pre></details>
+</article></section>
+<section class="unit" data-level="3"><h2>المستوى 3: الحلقات مع الشروط (Loops + Conditions) <span class="level">· متوسط</span></h2><article class="card exercise" data-level="3" data-search="count even and odd اقرأ n أعداداً واحسب عدد الزوجية والفردية. لكل عدد اختبر x%2." data-exercise-id="exercise-23">
+<h3>1. Count even and odd</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">اقرأ N أعداداً واحسب عدد الزوجية والفردية. مثال: لكل عدد اختبر x%2.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int i, n, x, even = 0, odd = 0;
+scanf(&quot;%d&quot;, &amp;n);
+for(i = 1; i &lt;= n; i++) {
+    scanf(&quot;%d&quot;, &amp;x);
+    if(x % 2 == 0) even++;
+    else odd++;
+}
+printf(&quot;Even=%d Odd=%d&quot;, even, odd);</pre></details>
+</article><article class="card exercise" data-level="3" data-search="positive and negative اقرأ n أعداد واحسب الموجب والسالب والصفر. استخدم if / else if / else." data-exercise-id="exercise-24">
+<h3>2. Positive and negative</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">اقرأ N أعداد واحسب الموجب والسالب والصفر. مثال: استخدم if / else if / else.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int i, n, x, pos=0, neg=0, zero=0;
+scanf(&quot;%d&quot;, &amp;n);
+for(i=1; i&lt;=n; i++) {
+    scanf(&quot;%d&quot;, &amp;x);
+    if(x&gt;0) pos++;
+    else if(x&lt;0) neg++;
+    else zero++;
+}
+printf(&quot;%d %d %d&quot;, pos, neg, zero);</pre></details>
+</article><article class="card exercise" data-level="3" data-search="maximum اقرأ n أعداداً وأوجد الأكبر. ابدأ max بأول عدد مدخل." data-exercise-id="exercise-25">
+<h3>3. Maximum</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">اقرأ N أعداداً وأوجد الأكبر. مثال: ابدأ max بأول عدد مدخل.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int i, n, x, max;
+scanf(&quot;%d&quot;, &amp;n);
+scanf(&quot;%d&quot;, &amp;max);
+for(i=2; i&lt;=n; i++) {
+    scanf(&quot;%d&quot;, &amp;x);
+    if(x &gt; max) max = x;
+}
+printf(&quot;%d&quot;, max);</pre></details>
+</article><article class="card exercise" data-level="3" data-search="minimum اقرأ n أعداداً وأوجد الأصغر. ابدأ min بأول عدد مدخل." data-exercise-id="exercise-26">
+<h3>4. Minimum</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">اقرأ N أعداداً وأوجد الأصغر. مثال: ابدأ min بأول عدد مدخل.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int i, n, x, min;
+scanf(&quot;%d&quot;, &amp;n);
+scanf(&quot;%d&quot;, &amp;min);
+for(i=2; i&lt;=n; i++) {
+    scanf(&quot;%d&quot;, &amp;x);
+    if(x &lt; min) min = x;
+}
+printf(&quot;%d&quot;, min);</pre></details>
+</article><article class="card exercise" data-level="3" data-search="average اقرأ n أعداداً واحسب المتوسط الحسابي. المتوسط = المجموع / n." data-exercise-id="exercise-27">
+<h3>5. Average</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">اقرأ N أعداداً واحسب المتوسط الحسابي. مثال: المتوسط = المجموع / N.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int i, n, x, sum = 0;
+scanf(&quot;%d&quot;, &amp;n);
+for(i=1; i&lt;=n; i++) {
+    scanf(&quot;%d&quot;, &amp;x);
+    sum += x;
+}
+if(n &gt; 0) printf(&quot;%.2f&quot;, (double)sum/n);</pre></details>
+</article><article class="card exercise" data-level="3" data-search="divisors اطبع جميع قواسم العدد n. n=12: 1,2,3,4,6,12." data-exercise-id="exercise-28">
+<h3>6. Divisors</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">اطبع جميع قواسم العدد N. مثال: N=12: 1,2,3,4,6,12.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int i, n;
+scanf(&quot;%d&quot;, &amp;n);
+for(i=1; i&lt;=n; i++)
+    if(n % i == 0) printf(&quot;%d &quot;, i);</pre></details>
+</article><article class="card exercise" data-level="3" data-search="prime number تحقق هل n أولي: لا يقبل القسمة إلا على 1 ونفسه. يكفي الفحص حتى i*i &lt;= n." data-exercise-id="exercise-29">
+<h3>7. Prime number</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">تحقق هل N أولي: لا يقبل القسمة إلا على 1 ونفسه. مثال: يكفي الفحص حتى i*i &lt;= n.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int i, n, prime = 1;
+scanf(&quot;%d&quot;, &amp;n);
+if(n &lt; 2) prime = 0;
+for(i=2; i*i&lt;=n &amp;&amp; prime; i++)
+    if(n % i == 0) prime = 0;
+if(prime) printf(&quot;Prime&quot;);
+else printf(&quot;Not prime&quot;);</pre></details>
+</article><article class="card exercise" data-level="3" data-search="prime numbers up to n اطبع كل الأعداد الأولية من 2 إلى n. لكل عدد اختبر أوليته." data-exercise-id="exercise-30">
+<h3>8. Prime numbers up to N</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">اطبع كل الأعداد الأولية من 2 إلى N. مثال: لكل عدد اختبر أوليته.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int n, x, d, prime;
+scanf(&quot;%d&quot;, &amp;n);
+for(x=2; x&lt;=n; x++) {
+    prime = 1;
+    for(d=2; d*d&lt;=x; d++)
+        if(x%d==0) { prime=0; break; }
+    if(prime) printf(&quot;%d &quot;, x);
+}</pre></details>
+</article><article class="card exercise" data-level="3" data-search="perfect number تحقق هل n يساوي مجموع قواسمه الموجبة الأصغر منه. 6=1+2+3." data-exercise-id="exercise-31">
+<h3>9. Perfect number</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">تحقق هل N يساوي مجموع قواسمه الموجبة الأصغر منه. مثال: 6=1+2+3.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int i, n, sum = 0;
+scanf(&quot;%d&quot;, &amp;n);
+for(i=1; i&lt;n; i++)
+    if(n%i==0) sum += i;
+if(n&gt;0 &amp;&amp; sum==n) printf(&quot;Perfect&quot;);
+else printf(&quot;Not perfect&quot;);</pre></details>
+</article><article class="card exercise" data-level="3" data-search="divisibility test اختبر هل n يقبل القسمة على k مع تجنب القسمة على صفر. الباقي يساوي صفراً." data-exercise-id="exercise-32">
+<h3>10. Divisibility test</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">اختبر هل N يقبل القسمة على K مع تجنب القسمة على صفر. مثال: الباقي يساوي صفراً.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int n, k;
+scanf(&quot;%d%d&quot;, &amp;n, &amp;k);
+if(k != 0 &amp;&amp; n % k == 0) printf(&quot;Divisible&quot;);
+else printf(&quot;Not divisible&quot;);</pre></details>
+</article><article class="card exercise" data-level="3" data-search="gcd / pgcd احسب القاسم المشترك الأكبر باستعمال خوارزمية إقليدس. مثال 18 و12 يعطي 6." data-exercise-id="exercise-33">
+<h3>11. GCD / PGCD</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">احسب القاسم المشترك الأكبر باستعمال خوارزمية إقليدس. مثال: مثال 18 و12 يعطي 6.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int a, b, r;
+scanf(&quot;%d%d&quot;, &amp;a, &amp;b);
+while(b != 0) {
+    r = a % b;
+    a = b;
+    b = r;
+}
+printf(&quot;%d&quot;, a);</pre></details>
+</article><article class="card exercise" data-level="3" data-search="lcm / ppcm احسب المضاعف المشترك الأصغر باستعمال pgcd. lcm(a,b)=|a*b|/gcd." data-exercise-id="exercise-34">
+<h3>12. LCM / PPCM</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">احسب المضاعف المشترك الأصغر باستعمال PGCD. مثال: LCM(a,b)=|a*b|/GCD.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int a, b, x, y, r, gcd;
+scanf(&quot;%d%d&quot;, &amp;a, &amp;b);
+x=a; y=b;
+while(y!=0) { r=x%y; x=y; y=r; }
+gcd=x;
+if(a==0 || b==0) printf(&quot;0&quot;);
+else printf(&quot;%d&quot;, (a/gcd)*b);</pre></details>
+</article><article class="card exercise" data-level="3" data-search="input validation استمر في طلب عدد موجب حتى يدخِل المستخدم قيمة صحيحة. استعمل do while." data-exercise-id="exercise-35">
+<h3>13. Input validation</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">استمر في طلب عدد موجب حتى يدخِل المستخدم قيمة صحيحة. مثال: استعمل do while.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int n;
+do {
+    printf(&quot;Enter a positive number: &quot;);
+    scanf(&quot;%d&quot;, &amp;n);
+} while(n &lt;= 0);
+printf(&quot;%d&quot;, n);</pre></details>
+</article></section>
+<section class="unit" data-level="4"><h2>المستوى 4: التعامل مع أرقام العدد (Digits) <span class="level">· متوسط – صعب</span></h2><article class="card exercise" data-level="4" data-search="count digits احسب عدد خانات عدد صحيح موجب. استعمل القسمة على 10 في كل دورة." data-exercise-id="exercise-36">
+<h3>1. Count digits</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">احسب عدد خانات عدد صحيح موجب. مثال: استعمل القسمة على 10 في كل دورة.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int n, count = 0;
+scanf(&quot;%d&quot;, &amp;n);
+if(n == 0) count = 1;
+while(n != 0) { count++; n /= 10; }
+printf(&quot;%d&quot;, count);</pre></details>
+</article><article class="card exercise" data-level="4" data-search="sum of digits احسب مجموع أرقام العدد. 1234 يعطي 10." data-exercise-id="exercise-37">
+<h3>2. Sum of digits</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">احسب مجموع أرقام العدد. مثال: 1234 يعطي 10.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int n, sum = 0;
+scanf(&quot;%d&quot;, &amp;n);
+if(n &lt; 0) n = -n;
+while(n != 0) {
+    sum += n % 10;
+    n /= 10;
+}
+printf(&quot;%d&quot;, sum);</pre></details>
+</article><article class="card exercise" data-level="4" data-search="product of digits احسب حاصل ضرب أرقام العدد. 234 يعطي 24." data-exercise-id="exercise-38">
+<h3>3. Product of digits</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">احسب حاصل ضرب أرقام العدد. مثال: 234 يعطي 24.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int n, product = 1;
+scanf(&quot;%d&quot;, &amp;n);
+if(n &lt; 0) n = -n;
+if(n == 0) product = 0;
+while(n != 0) {
+    product *= n % 10;
+    n /= 10;
+}
+printf(&quot;%d&quot;, product);</pre></details>
+</article><article class="card exercise" data-level="4" data-search="reverse number اعكس ترتيب أرقام العدد. 1234 يصبح 4321." data-exercise-id="exercise-39">
+<h3>4. Reverse number</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">اعكس ترتيب أرقام العدد. مثال: 1234 يصبح 4321.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int n, rev = 0;
+scanf(&quot;%d&quot;, &amp;n);
+while(n != 0) {
+    rev = rev*10 + n%10;
+    n /= 10;
+}
+printf(&quot;%d&quot;, rev);</pre></details>
+</article><article class="card exercise" data-level="4" data-search="first and last digit استخرج أول وآخر رقم من عدد موجب. مثال 5832: الأول 5 والأخير 2." data-exercise-id="exercise-40">
+<h3>5. First and last digit</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">استخرج أول وآخر رقم من عدد موجب. مثال: مثال 5832: الأول 5 والأخير 2.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int n, first, last;
+scanf(&quot;%d&quot;, &amp;n);
+last = n % 10;
+first = n;
+while(first &gt;= 10) first /= 10;
+printf(&quot;First=%d Last=%d&quot;, first, last);</pre></details>
+</article><article class="card exercise" data-level="4" data-search="count even digits احسب عدد الأرقام الزوجية داخل عدد. استعمل digit%2==0." data-exercise-id="exercise-41">
+<h3>6. Count even digits</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">احسب عدد الأرقام الزوجية داخل عدد. مثال: استعمل digit%2==0.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int n, digit, count=0;
+scanf(&quot;%d&quot;, &amp;n);
+if(n &lt; 0) n=-n;
+do {
+    digit=n%10;
+    if(digit%2==0) count++;
+    n/=10;
+} while(n!=0);
+printf(&quot;%d&quot;, count);</pre></details>
+</article><article class="card exercise" data-level="4" data-search="count odd digits احسب عدد الأرقام الفردية داخل عدد. استعمل digit%2!=0." data-exercise-id="exercise-42">
+<h3>7. Count odd digits</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">احسب عدد الأرقام الفردية داخل عدد. مثال: استعمل digit%2!=0.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int n, digit, count=0;
+scanf(&quot;%d&quot;, &amp;n);
+if(n &lt; 0) n=-n;
+while(n!=0) {
+    digit=n%10;
+    if(digit%2!=0) count++;
+    n/=10;
+}
+printf(&quot;%d&quot;, count);</pre></details>
+</article><article class="card exercise" data-level="4" data-search="largest digit أوجد أكبر رقم داخل العدد. مثال 5832 يعطي 8." data-exercise-id="exercise-43">
+<h3>8. Largest digit</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">أوجد أكبر رقم داخل العدد. مثال: مثال 5832 يعطي 8.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int n, digit, max=0;
+scanf(&quot;%d&quot;, &amp;n);
+if(n &lt; 0) n=-n;
+do {
+    digit=n%10;
+    if(digit&gt;max) max=digit;
+    n/=10;
+} while(n!=0);
+printf(&quot;%d&quot;, max);</pre></details>
+</article><article class="card exercise" data-level="4" data-search="smallest digit أوجد أصغر رقم داخل العدد. مثال 5832 يعطي 2." data-exercise-id="exercise-44">
+<h3>9. Smallest digit</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">أوجد أصغر رقم داخل العدد. مثال: مثال 5832 يعطي 2.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int n, digit, min=9;
+scanf(&quot;%d&quot;, &amp;n);
+if(n &lt; 0) n=-n;
+do {
+    digit=n%10;
+    if(digit&lt;min) min=digit;
+    n/=10;
+} while(n!=0);
+printf(&quot;%d&quot;, min);</pre></details>
+</article><article class="card exercise" data-level="4" data-search="palindrome number تحقق هل العدد يساوي معكوسه. 121 palindrome، و123 ليس كذلك." data-exercise-id="exercise-45">
+<h3>10. Palindrome number</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">تحقق هل العدد يساوي معكوسه. مثال: 121 Palindrome، و123 ليس كذلك.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int n, temp, rev=0;
+scanf(&quot;%d&quot;, &amp;n);
+temp=n;
+while(temp&gt;0) {
+    rev=rev*10 + temp%10;
+    temp/=10;
+}
+if(n&gt;=0 &amp;&amp; n==rev) printf(&quot;Palindrome&quot;);
+else printf(&quot;Not palindrome&quot;);</pre></details>
+</article><article class="card exercise" data-level="4" data-search="frequency of digit احسب كم مرة يظهر رقم d في العدد n. n=12232 وd=2 يعطي 3." data-exercise-id="exercise-46">
+<h3>11. Frequency of digit</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">احسب كم مرة يظهر رقم D في العدد N. مثال: N=12232 وD=2 يعطي 3.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int n, d, count=0;
+scanf(&quot;%d%d&quot;, &amp;n, &amp;d);
+if(n &lt; 0) n=-n;
+do {
+    if(n%10 == d) count++;
+    n/=10;
+} while(n!=0);
+printf(&quot;%d&quot;, count);</pre></details>
+</article><article class="card exercise" data-level="4" data-search="extract selected digits اطبع الأرقام التي تحقق شرطاً، مثال الأرقام الزوجية. استخراج الأرقام من اليمين إلى اليسار." data-exercise-id="exercise-47">
+<h3>12. Extract selected digits</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">اطبع الأرقام التي تحقق شرطاً، مثال الأرقام الزوجية. مثال: استخراج الأرقام من اليمين إلى اليسار.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int n, digit;
+scanf(&quot;%d&quot;, &amp;n);
+if(n &lt; 0) n=-n;
+while(n!=0) {
+    digit=n%10;
+    if(digit%2==0) printf(&quot;%d &quot;, digit);
+    n/=10;
+}</pre></details>
+</article></section>
+<section class="unit" data-level="5"><h2>المستوى 5: المتتاليات الرياضية <span class="level">· متوسط – صعب</span></h2><article class="card exercise" data-level="5" data-search="fibonacci اطبع أول n حدود من متتالية فيبوناتشي. 0,1,1,2,3,5,..." data-exercise-id="exercise-48">
+<h3>1. Fibonacci</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">اطبع أول N حدود من متتالية فيبوناتشي. مثال: 0,1,1,2,3,5,...</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int i, n;
+long long a=0, b=1, c;
+scanf(&quot;%d&quot;, &amp;n);
+for(i=1; i&lt;=n; i++) {
+    printf(&quot;%lld &quot;, a);
+    c=a+b; a=b; b=c;
+}</pre></details>
+</article><article class="card exercise" data-level="5" data-search="arithmetic sequence اطبع n حدود من متتالية حسابية. a ثم نضيف الفرق d كل مرة." data-exercise-id="exercise-49">
+<h3>2. Arithmetic sequence</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">اطبع N حدود من متتالية حسابية. مثال: A ثم نضيف الفرق D كل مرة.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int i, n, a, d;
+scanf(&quot;%d%d%d&quot;, &amp;a, &amp;d, &amp;n);
+for(i=0; i&lt;n; i++)
+    printf(&quot;%d &quot;, a+i*d);</pre></details>
+</article><article class="card exercise" data-level="5" data-search="geometric sequence اطبع n حدود من متتالية هندسية. كل حد يساوي السابق مضروباً في r." data-exercise-id="exercise-50">
+<h3>3. Geometric sequence</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">اطبع N حدود من متتالية هندسية. مثال: كل حد يساوي السابق مضروباً في R.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int i, n, a, r;
+scanf(&quot;%d%d%d&quot;, &amp;a, &amp;r, &amp;n);
+for(i=1; i&lt;=n; i++) {
+    printf(&quot;%d &quot;, a);
+    a *= r;
+}</pre></details>
+</article><article class="card exercise" data-level="5" data-search="harmonic sequence اطبع الحدود 1, 1/2, 1/3, ... حتى n. استخدم double لتجنب القسمة الصحيحة." data-exercise-id="exercise-51">
+<h3>4. Harmonic sequence</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">اطبع الحدود 1, 1/2, 1/3, ... حتى N. مثال: استخدم double لتجنب القسمة الصحيحة.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int i, n;
+scanf(&quot;%d&quot;, &amp;n);
+for(i=1; i&lt;=n; i++)
+    printf(&quot;%.4f &quot;, 1.0/i);</pre></details>
+</article><article class="card exercise" data-level="5" data-search="sum of series احسب مجموع حدود متتالية حسابية. استخدم متغير term يتغير كل دورة." data-exercise-id="exercise-52">
+<h3>5. Sum of series</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">احسب مجموع حدود متتالية حسابية. مثال: استخدم متغير term يتغير كل دورة.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int i, n, term, a, d, sum=0;
+scanf(&quot;%d%d%d&quot;, &amp;a, &amp;d, &amp;n);
+term=a;
+for(i=1; i&lt;=n; i++) {
+    sum += term;
+    term += d;
+}
+printf(&quot;%d&quot;, sum);</pre></details>
+</article><article class="card exercise" data-level="5" data-search="alternating series احسب 1-2+3-4+...±n. الإشارة تتغير حسب زوجية i." data-exercise-id="exercise-53">
+<h3>6. Alternating series</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">احسب 1-2+3-4+...±N. مثال: الإشارة تتغير حسب زوجية i.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int i, n, sum=0;
+scanf(&quot;%d&quot;, &amp;n);
+for(i=1; i&lt;=n; i++)
+    if(i%2==0) sum-=i;
+    else sum+=i;
+printf(&quot;%d&quot;, sum);</pre></details>
+</article><article class="card exercise" data-level="5" data-search="factorial series احسب 1/1! + 1/2! + ... + 1/n!. حدّث factorial ثم أضف مقلوبه." data-exercise-id="exercise-54">
+<h3>7. Factorial series</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">احسب 1/1! + 1/2! + ... + 1/N!. مثال: حدّث factorial ثم أضف مقلوبه.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int i, n;
+double sum=0;
+long long fact=1;
+scanf(&quot;%d&quot;, &amp;n);
+for(i=1; i&lt;=n; i++) {
+    fact *= i;
+    sum += 1.0/fact;
+}
+printf(&quot;%.6f&quot;, sum);</pre></details>
+</article><article class="card exercise" data-level="5" data-search="exponential series قرّب e^x باستعمال 1+x+x²/2!+... حتى n. حدّث الحد دون إعادة حساب القوة والمضروب." data-exercise-id="exercise-55">
+<h3>8. Exponential series</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">قرّب e^x باستعمال 1+x+x²/2!+... حتى N. مثال: حدّث الحد دون إعادة حساب القوة والمضروب.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int i, n;
+double x, term=1, sum=1;
+scanf(&quot;%lf%d&quot;, &amp;x, &amp;n);
+for(i=1; i&lt;=n; i++) {
+    term = term*x/i;
+    sum += term;
+}
+printf(&quot;%.6f&quot;, sum);</pre></details>
+</article></section>
+<section class="unit" data-level="6"><h2>المستوى 6: الحلقات المتداخلة (Nested Loops) <span class="level">· صعب</span></h2><article class="card exercise" data-level="6" data-search="square pattern اطبع مربعاً من النجوم n×n. حلقة خارجية للسطور وداخلية للأعمدة." data-exercise-id="exercise-56">
+<h3>1. Square pattern</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">اطبع مربعاً من النجوم N×N. مثال: حلقة خارجية للسطور وداخلية للأعمدة.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int i, j, n;
+scanf(&quot;%d&quot;, &amp;n);
+for(i=1; i&lt;=n; i++) {
+    for(j=1; j&lt;=n; j++) printf(&quot;* &quot;);
+    printf(&quot;\n&quot;);
+}</pre></details>
+</article><article class="card exercise" data-level="6" data-search="right triangle اطبع مثلثاً قائماً من النجوم. عدد النجوم في السطر i يساوي i." data-exercise-id="exercise-57">
+<h3>2. Right triangle</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">اطبع مثلثاً قائماً من النجوم. مثال: عدد النجوم في السطر i يساوي i.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int i, j, n;
+scanf(&quot;%d&quot;, &amp;n);
+for(i=1; i&lt;=n; i++) {
+    for(j=1; j&lt;=i; j++) printf(&quot;* &quot;);
+    printf(&quot;\n&quot;);
+}</pre></details>
+</article><article class="card exercise" data-level="6" data-search="inverted triangle اطبع مثلثاً مقلوباً. ابدأ عدد النجوم من n ثم أنقصه." data-exercise-id="exercise-58">
+<h3>3. Inverted triangle</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">اطبع مثلثاً مقلوباً. مثال: ابدأ عدد النجوم من N ثم أنقصه.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int i, j, n;
+scanf(&quot;%d&quot;, &amp;n);
+for(i=n; i&gt;=1; i--) {
+    for(j=1; j&lt;=i; j++) printf(&quot;* &quot;);
+    printf(&quot;\n&quot;);
+}</pre></details>
+</article><article class="card exercise" data-level="6" data-search="number triangle اطبع مثلثاً بحيث يحتوي السطر i على الأعداد من 1 إلى i. اطبع j بدل النجمة." data-exercise-id="exercise-59">
+<h3>4. Number triangle</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">اطبع مثلثاً بحيث يحتوي السطر i على الأعداد من 1 إلى i. مثال: اطبع j بدل النجمة.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int i, j, n;
+scanf(&quot;%d&quot;, &amp;n);
+for(i=1; i&lt;=n; i++) {
+    for(j=1; j&lt;=i; j++) printf(&quot;%d &quot;, j);
+    printf(&quot;\n&quot;);
+}</pre></details>
+</article><article class="card exercise" data-level="6" data-search="all multiplication tables اطبع جداول الضرب من 1 إلى n. الحلقتان تمثلان العدد والمضاعف." data-exercise-id="exercise-60">
+<h3>5. All multiplication tables</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">اطبع جداول الضرب من 1 إلى N. مثال: الحلقتان تمثلان العدد والمضاعف.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int i, j, n;
+scanf(&quot;%d&quot;, &amp;n);
+for(i=1; i&lt;=n; i++) {
+    for(j=1; j&lt;=10; j++)
+        printf(&quot;%d x %d = %d\n&quot;, i, j, i*j);
+    printf(&quot;\n&quot;);
+}</pre></details>
+</article><article class="card exercise" data-level="6" data-search="rectangle pattern اطبع مستطيلاً عرضه w وارتفاعه h. عدد السطور h وعدد الرموز w." data-exercise-id="exercise-61">
+<h3>6. Rectangle pattern</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">اطبع مستطيلاً عرضه W وارتفاعه H. مثال: عدد السطور H وعدد الرموز W.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int i, j, h, w;
+scanf(&quot;%d%d&quot;, &amp;h, &amp;w);
+for(i=1; i&lt;=h; i++) {
+    for(j=1; j&lt;=w; j++) printf(&quot;* &quot;);
+    printf(&quot;\n&quot;);
+}</pre></details>
+</article><article class="card exercise" data-level="6" data-search="pyramid اطبع هرماً بسيطاً من النجوم. اطبع مسافات ثم 2*i-1 نجمة." data-exercise-id="exercise-62">
+<h3>7. Pyramid</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">اطبع هرماً بسيطاً من النجوم. مثال: اطبع مسافات ثم 2*i-1 نجمة.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int i, j, n;
+scanf(&quot;%d&quot;, &amp;n);
+for(i=1; i&lt;=n; i++) {
+    for(j=1; j&lt;=n-i; j++) printf(&quot; &quot;);
+    for(j=1; j&lt;=2*i-1; j++) printf(&quot;*&quot;);
+    printf(&quot;\n&quot;);
+}</pre></details>
+</article><article class="card exercise" data-level="6" data-search="multiplication pairs اطبع كل زوج (i,j) حيث 1&lt;=i&lt;=n و1&lt;=j&lt;=m. كل دورة خارجية تقابلها m دورات داخلية." data-exercise-id="exercise-63">
+<h3>8. Multiplication pairs</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">اطبع كل زوج (i,j) حيث 1&lt;=i&lt;=N و1&lt;=j&lt;=M. مثال: كل دورة خارجية تقابلها M دورات داخلية.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int i, j, n, m;
+scanf(&quot;%d%d&quot;, &amp;n, &amp;m);
+for(i=1; i&lt;=n; i++)
+    for(j=1; j&lt;=m; j++)
+        printf(&quot;(%d,%d) &quot;, i, j);</pre></details>
+</article><article class="card exercise" data-level="6" data-search="sum of i times j احسب مجموع i*j لكل الأزواج من 1 إلى n و1 إلى m. أضف حاصل الضرب داخل الحلقة الداخلية." data-exercise-id="exercise-64">
+<h3>9. Sum of i times j</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">احسب مجموع i*j لكل الأزواج من 1 إلى N و1 إلى M. مثال: أضف حاصل الضرب داخل الحلقة الداخلية.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int i, j, n, m, sum=0;
+scanf(&quot;%d%d&quot;, &amp;n, &amp;m);
+for(i=1; i&lt;=n; i++)
+    for(j=1; j&lt;=m; j++) sum += i*j;
+printf(&quot;%d&quot;, sum);</pre></details>
+</article><article class="card exercise" data-level="6" data-search="nested conditions اطبع أزواج الأعداد التي مجموعها يساوي s. شرط if داخل الحلقة الداخلية." data-exercise-id="exercise-65">
+<h3>10. Nested conditions</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">اطبع أزواج الأعداد التي مجموعها يساوي S. مثال: شرط if داخل الحلقة الداخلية.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int i, j, n, s;
+scanf(&quot;%d%d&quot;, &amp;n, &amp;s);
+for(i=1; i&lt;=n; i++)
+    for(j=1; j&lt;=n; j++)
+        if(i+j==s) printf(&quot;(%d,%d) &quot;, i, j);</pre></details>
+</article></section>
+<section class="unit" data-level="7"><h2>المستوى 7: تمارين مركبة وتطبيقية <span class="level">· صعب نسبياً</span></h2><article class="card exercise" data-level="7" data-search="menu-driven program اعرض قائمة عمليات وكررها حتى يختار المستخدم الخروج. استعمل do while للقائمة." data-exercise-id="exercise-66">
+<h3>1. Menu-driven program</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">اعرض قائمة عمليات وكررها حتى يختار المستخدم الخروج. مثال: استعمل do while للقائمة.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int choice;
+do {
+    printf(&quot;\n1-Sum  2-Square  0-Exit\n&quot;);
+    scanf(&quot;%d&quot;, &amp;choice);
+    if(choice==1) printf(&quot;Selected Sum\n&quot;);
+    else if(choice==2) printf(&quot;Selected Square\n&quot;);
+} while(choice!=0);</pre></details>
+</article><article class="card exercise" data-level="7" data-search="guessing game اطلب من المستخدم تخمين قيمة ثابتة حتى يصيبها. يتكرر الإدخال ما دام التخمين خاطئاً." data-exercise-id="exercise-67">
+<h3>2. Guessing game</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">اطلب من المستخدم تخمين قيمة ثابتة حتى يصيبها. مثال: يتكرر الإدخال ما دام التخمين خاطئاً.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int secret=7, guess;
+do {
+    printf(&quot;Guess: &quot;);
+    scanf(&quot;%d&quot;, &amp;guess);
+    if(guess&lt;secret) printf(&quot;Too small\n&quot;);
+    else if(guess&gt;secret) printf(&quot;Too large\n&quot;);
+} while(guess!=secret);
+printf(&quot;Correct!&quot;);</pre></details>
+</article><article class="card exercise" data-level="7" data-search="repeated input استقبل أعداداً حتى يدخل المستخدم صفراً ثم اطبع المجموع. الصفر قيمة توقف ولا يدخل في المجموع." data-exercise-id="exercise-68">
+<h3>3. Repeated input</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">استقبل أعداداً حتى يدخل المستخدم صفراً ثم اطبع المجموع. مثال: الصفر قيمة توقف ولا يدخل في المجموع.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int x, sum=0;
+scanf(&quot;%d&quot;, &amp;x);
+while(x!=0) {
+    sum += x;
+    scanf(&quot;%d&quot;, &amp;x);
+}
+printf(&quot;%d&quot;, sum);</pre></details>
+</article><article class="card exercise" data-level="7" data-search="sentinel value استقبل قيماً حتى يدخل المستخدم -1 واحسب عدد القيم المدخلة. لا تحسب قيمة التوقف." data-exercise-id="exercise-69">
+<h3>4. Sentinel value</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">استقبل قيماً حتى يدخل المستخدم -1 واحسب عدد القيم المدخلة. مثال: لا تحسب قيمة التوقف.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int x, count=0;
+scanf(&quot;%d&quot;, &amp;x);
+while(x!=-1) {
+    count++;
+    scanf(&quot;%d&quot;, &amp;x);
+}
+printf(&quot;%d&quot;, count);</pre></details>
+</article><article class="card exercise" data-level="7" data-search="statistics اقرأ أعداداً حتى -1 ثم احسب المجموع والمتوسط والأكبر والأصغر. عالج أول قيمة منفصلة لتهيئة max وmin." data-exercise-id="exercise-70">
+<h3>5. Statistics</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">اقرأ أعداداً حتى -1 ثم احسب المجموع والمتوسط والأكبر والأصغر. مثال: عالج أول قيمة منفصلة لتهيئة max وmin.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int x, count=0, sum=0, max, min;
+scanf(&quot;%d&quot;, &amp;x);
+if(x!=-1) {
+    max=min=x;
+    while(x!=-1) {
+        sum+=x; count++;
+        if(x&gt;max) max=x;
+        if(x&lt;min) min=x;
+        scanf(&quot;%d&quot;, &amp;x);
+    }
+    printf(&quot;Sum=%d Avg=%.2f Max=%d Min=%d&quot;,
+           sum, (double)sum/count, max, min);
+} else printf(&quot;No data&quot;);</pre></details>
+</article><article class="card exercise" data-level="7" data-search="validate division اطلب مقاماً غير صفري ثم نفذ القسمة. أعد الطلب ما دام المقام صفراً." data-exercise-id="exercise-71">
+<h3>6. Validate division</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">اطلب مقاماً غير صفري ثم نفذ القسمة. مثال: أعد الطلب ما دام المقام صفراً.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>double a, b;
+scanf(&quot;%lf&quot;, &amp;a);
+do {
+    scanf(&quot;%lf&quot;, &amp;b);
+} while(b==0);
+printf(&quot;%.2f&quot;, a/b);</pre></details>
+</article><article class="card exercise" data-level="7" data-search="multiple sums احسب مجموع الأعداد الزوجية والفردية من 1 إلى n في مرور واحد. استعمل مجموعين منفصلين." data-exercise-id="exercise-72">
+<h3>7. Multiple sums</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">احسب مجموع الأعداد الزوجية والفردية من 1 إلى N في مرور واحد. مثال: استعمل مجموعين منفصلين.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int i, n, even=0, odd=0;
+scanf(&quot;%d&quot;, &amp;n);
+for(i=1; i&lt;=n; i++) {
+    if(i%2==0) even+=i;
+    else odd+=i;
+}
+printf(&quot;Even sum=%d Odd sum=%d&quot;, even, odd);</pre></details>
+</article><article class="card exercise" data-level="7" data-search="sum of factorials احسب 1! + 2! + ... + n! مع المحافظة على قيمة factorial السابقة. هذا تمرين مركب: تحديث fact ثم sum." data-exercise-id="exercise-73">
+<h3>8. Sum of factorials</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">احسب 1! + 2! + ... + N! مع المحافظة على قيمة factorial السابقة. مثال: هذا تمرين مركب: تحديث fact ثم sum.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int i, n;
+long long fact=1, sum=0;
+scanf(&quot;%d&quot;, &amp;n);
+for(i=1; i&lt;=n; i++) {
+    fact=fact*i;
+    sum=sum+fact;
+}
+printf(&quot;%lld&quot;, sum);</pre></details>
+</article><article class="card exercise" data-level="7" data-search="fibonacci with condition اطبع حدود fibonacci التي لا تتجاوز m. استمر ما دام الحد الحالي لا يتجاوز m." data-exercise-id="exercise-74">
+<h3>9. Fibonacci with condition</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">اطبع حدود Fibonacci التي لا تتجاوز M. مثال: استمر ما دام الحد الحالي لا يتجاوز M.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int m;
+long long a=0, b=1, c;
+scanf(&quot;%d&quot;, &amp;m);
+while(a&lt;=m) {
+    printf(&quot;%lld &quot;, a);
+    c=a+b; a=b; b=c;
+}</pre></details>
+</article><article class="card exercise" data-level="7" data-search="number properties احسب مجموع أرقام عدد، وعدد أرقامه، وهل هو palindrome. اجمع بين استخراج الأرقام وبناء المعكوس." data-exercise-id="exercise-75">
+<h3>10. Number properties</h3><div class="meta">فكرة التمرين</div>
+<p class="idea">احسب مجموع أرقام عدد، وعدد أرقامه، وهل هو Palindrome. مثال: اجمع بين استخراج الأرقام وبناء المعكوس.</p><div class="exercise-actions"><button type="button" class="done-btn" data-complete-button>أنجزت التمرين</button></div>
+<details><summary>إظهار الحل</summary><pre>int n, t, d, sum=0, count=0, rev=0;
+scanf(&quot;%d&quot;, &amp;n);
+t=n;
+while(t&gt;0) {
+    d=t%10;
+    sum+=d; count++;
+    rev=rev*10+d;
+    t/=10;
+}
+printf(&quot;Sum=%d Digits=%d &quot;, sum, count);
+if(n&gt;=0 &amp;&amp; n==rev) printf(&quot;Palindrome&quot;);
+else printf(&quot;Not palindrome&quot;);</pre></details>
+</article></section></div><div class="empty" id="empty">لا توجد نتائج مطابقة.</div></main>
+<footer><div class="wrap">هذا دليل تدريبي موسع لموضوع الحلقات. قد تختلف حدود المقرر والمواضيع المطلوبة حسب الأستاذ والجامعة.</div></footer>
+<script>
+(function () {
+  var STORAGE_KEY = 'loops-c-algorithmique1-completed-v1';
+  function byId(id) { return document.getElementById(id); }
+  var search = byId('search');
+  var filter = byId('filter');
+  var cards = document.querySelectorAll('.exercise');
+  var sections = document.querySelectorAll('.unit');
+  var stats = byId('stats');
+  var empty = byId('empty');
+  var progressText = byId('progressText');
+  var progressFill = byId('progressFill');
+  var completed = {};
+  var storageAvailable = true;
+
+  try {
+    var saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) completed = JSON.parse(saved) || {};
+  } catch (e) {
+    storageAvailable = false;
+    completed = {};
+  }
+
+  function saveProgress() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(completed));
+      storageAvailable = true;
+    } catch (e) {
+      storageAvailable = false;
+    }
+  }
+
+  function updateProgress() {
+    var count = 0;
+    var i;
+    for (i = 0; i < cards.length; i++) {
+      var card = cards[i];
+      var id = card.getAttribute('data-exercise-id');
+      var done = !!completed[id];
+      var button = card.querySelector('[data-complete-button]');
+      card.classList.toggle('is-completed', done);
+      button.classList.toggle('is-done', done);
+      button.textContent = done ? 'إلغاء الإنجاز' : 'أنجزت التمرين';
+      button.setAttribute('aria-pressed', done ? 'true' : 'false');
+      if (done) count++;
+    }
+    var percent = cards.length ? Math.round(count * 100 / cards.length) : 0;
+    progressText.textContent = 'أنجزت ' + count + ' من ' + cards.length + ' تمريناً (' + percent + '%)';
+    progressFill.style.width = percent + '%';
+    progressFill.setAttribute('aria-valuenow', String(percent));
+    if (!storageAvailable) {
+      progressText.textContent += ' — قد لا يُحفظ التقدم في هذا المتصفح';
+    }
+  }
+
+  function normalize(value) {
+    return String(value || '').toLowerCase().replace(/\s+/g, ' ').replace(/^\s+|\s+$/g, '');
+  }
+
+  function render() {
+    var q = normalize(search.value);
+    var level = filter.value;
+    var shown = 0;
+    var i;
+    for (i = 0; i < cards.length; i++) {
+      var card = cards[i];
+      var matchesText = normalize(card.getAttribute('data-search')).indexOf(q) !== -1;
+      var matchesLevel = level === 'all' || card.getAttribute('data-level') === level;
+      var visible = matchesText && matchesLevel;
+      card.style.display = visible ? '' : 'none';
+      if (visible) shown++;
+    }
+    for (i = 0; i < sections.length; i++) {
+      var section = sections[i];
+      var visibleCards = section.querySelectorAll('.exercise:not([style*="display: none"])');
+      section.style.display = visibleCards.length ? '' : 'none';
+    }
+    empty.style.display = shown ? 'none' : 'block';
+    stats.textContent = 'يعرض ' + shown + ' تمريناً من أصل ' + cards.length + ' تمريناً';
+  }
+
+  for (var i = 0; i < cards.length; i++) {
+    (function (card) {
+      var button = card.querySelector('[data-complete-button]');
+      button.addEventListener('click', function () {
+        var id = card.getAttribute('data-exercise-id');
+        if (completed[id]) delete completed[id];
+        else completed[id] = true;
+        saveProgress();
+        updateProgress();
+      }, false);
+    }(cards[i]));
+  }
+
+  search.addEventListener('input', render, false);
+  filter.addEventListener('change', render, false);
+  byId('allBtn').addEventListener('click', function () {
+    var details = document.querySelectorAll('details');
+    for (var j = 0; j < details.length; j++) details[j].open = true;
+  }, false);
+  byId('hideBtn').addEventListener('click', function () {
+    var details = document.querySelectorAll('details');
+    for (var j = 0; j < details.length; j++) details[j].open = false;
+  }, false);
+  byId('resetProgress').addEventListener('click', function () {
+    if (window.confirm('هل تريد حذف سجل إنجازك لجميع التمارين؟')) {
+      completed = {};
+      saveProgress();
+      updateProgress();
+    }
+  }, false);
+
+  updateProgress();
+  render();
+}());
+</script>
+</body></html>
